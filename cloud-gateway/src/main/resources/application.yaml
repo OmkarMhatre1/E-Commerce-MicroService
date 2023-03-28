@@ -1,0 +1,60 @@
+server:
+  port: 9090
+
+spring:
+  application:
+    name: API-GATEWAY
+
+  cloud:
+    gateway:
+      routes:
+        - id: PRODUCT-SERVICE
+          uri:  lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/api/product/**
+
+        - id: ORDER-SERVICE
+          uri:  lb://ORDER-SERVICE
+          predicates:
+            - Path=/api/order/**
+
+        - id: INVENTORY-SERVICE
+          uri:  lb://INVENTORY-SERVICE
+          predicates:
+            - Path=/api/inventory/**
+
+  zipkin:
+    base-url: http://localhost:9411
+  sleuth:
+    sampler:
+      probability: 1.0
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:5050/realms/spring-boot-microservices-realm
+
+eureka:
+  client:
+    service-url:
+      deafaultzone: http://localhost:8761/eureka
+
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: TRACE
+
+#actuator prometheus endpoint
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+
+
+
+
+
+
